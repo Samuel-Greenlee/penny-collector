@@ -1,7 +1,7 @@
 <?php
 
 class penny_db {
-    //Create
+    //Create function
     public static function insertPenny($penny) {
         $db = Database::getDB();
         $query = 'insert into penny(pennyAmount, pennyCondition'
@@ -9,15 +9,15 @@ class penny_db {
                 . 'values(:pennyAmount, :pennyCondition, :pennyID,'
                 . ':pennyMint, :userName)';
         $statement = $db->prepare($query);
-        $statement->bindValue(':pennyAmount', $penny -> $pennyAmount);
-        $statement->bindValue(':pennyCondition', $penny -> $pennyCondition);
-        $statement->bindValue(':pennyID', $penny -> $pennyID);
-        $statement->bindValue(':pennyMint', $penny -> $pennyMint);
-        $statement->bindValue(':userName', $penny -> $userName);
+        $statement->bindValue(':pennyAmount', $penny -> getPennyAmount());
+        $statement->bindValue(':pennyCondition', $penny -> getPennyCondition());
+        $statement->bindValue(':pennyID', $penny -> getPennyID());
+        $statement->bindValue(':pennyMint', $penny -> getPennyMint());
+        $statement->bindValue(':userName', $penny -> getUserName());
         $statement->execute();
         $statement->closeCursor();
     }
-    //Read
+    //Read functions
     public static function getAllPenny() {
         $db = Database::getDB();
         $query = 'SELECT * FROM penny
@@ -40,7 +40,7 @@ class penny_db {
         $statement->closeCursor();
         return $penny;
     }        
-    //Update
+    //Update function
     public static function updatePenny($penny) {
         $db = Database::getDB();
         $query = 'update penny set '
@@ -48,16 +48,16 @@ class penny_db {
                 . ' pennyMint = :pennyMint, userName = :userName '
                 . 'Where pennyID = :pennyID';
         $statement = $db->prepare($query);
-        $statement->bindValue(':pennyAmount', $penny -> $pennyAmount);
-        $statement->bindValue(':pennyCondition', $penny -> $pennyCondition);
-        $statement->bindValue(':pennyID', $penny -> $pennyID);
-        $statement->bindValue(':pennyMint', $penny -> $pennyMint);
-        $statement->bindValue(':userName', $penny -> $userName);
+        $statement->bindValue(':pennyAmount', $penny -> getPennyAmount());
+        $statement->bindValue(':pennyCondition', $penny -> getPennyCondition());
+        $statement->bindValue(':pennyID', $penny -> getPennyID());
+        $statement->bindValue(':pennyMint', $penny -> getPennyMint());
+        $statement->bindValue(':userName', $penny -> getUserName());
         $statement->execute();
         $statement->closeCursor();
     }
     
-    //Delete
+    //Delete function
     public static function deletePenny($pennyID) {
         $db = Database::getDB();
         $query = 'DELETE FROM penny

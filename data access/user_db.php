@@ -1,25 +1,25 @@
 <?php
 
 class user_db {
-     //Create
+     //Create function
     public static function insertUser($user) {
         $db = Database::getDB();
         $query = 'insert into user(userName, password)'
                 . 'values(:userName, :password)';
         $statement = $db->prepare($query);
-        $statement->bindValue(':userName', $user -> $userName);
-        $statement->bindValue(':password', $user -> $password);
+        $statement->bindValue(':userName', $user -> getUserName());
+        $statement->bindValue(':password', $user -> getPassword());
         $statement->execute();
         $statement->closeCursor();
     }
-    //Read
+    //Read functions
     public static function getAllUser() {
         $db = Database::getDB();
         $query = 'SELECT * FROM user
                   ORDER BY userName';
         $statement = $db->prepare($query);
         $statement->execute();
-        $penny = $statement->fetchAll();
+        $user = $statement->fetchAll();
         $statement->closeCursor();
         return $user;
     }
@@ -35,21 +35,21 @@ class user_db {
         $statement->closeCursor();
         return $user;
     }        
-    //Update
+    //Update function
     public static function updateUserPassword($user) {
         $db = Database::getDB();
         $query = 'update user set '
                 . 'password = :password '
                 . 'Where userName = :userName';
         $statement = $db->prepare($query);
-        $statement->bindValue(':userName', $user -> $userName);
-        $statement->bindValue(':password', $user -> $password);
+        $statement->bindValue(':userName', $user -> getUserName());
+        $statement->bindValue(':password', $user -> getPassword());
         $statement->execute();
         $statement->closeCursor();
     }
     
-    //Delete
-    public static function deleteUser($UserName) {
+    //Delete function
+    public static function deleteUser($userName) {
         $db = Database::getDB();
         $query = 'DELETE FROM user
                   WHERE userName = :userName';
@@ -57,6 +57,6 @@ class user_db {
         $statement->bindValue(':userName', $userName);
         $statement->execute();
         $statement->closeCursor();
-    }        
+    }
 }
 

@@ -1,5 +1,6 @@
 <?php
 
+//Access the database
 class Database {
     private static $dsn = 'mysql:host=localhost;dbname=penny_collector';
     private static $username = 'root';
