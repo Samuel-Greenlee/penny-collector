@@ -50,7 +50,7 @@
         
         <!--Display Error Message-->
         <?php if (!empty($error_message)) { ?>
-            <p class="error"><?php echo htmlspecialchars($error_message); ?></p>
+            <p class="error"><?php echo $error_message ?></p>
         <?php } ?> 
         </div>
     </body>

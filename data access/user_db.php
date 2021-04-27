@@ -58,5 +58,22 @@ class user_db {
         $statement->execute();
         $statement->closeCursor();
     }
+    
+     public static function checkLogIn($userName, $password) {
+        $db = Database::getDB();
+        $query = 'SELECT password FROM user
+                  WHERE userName = :userName';
+        $statement = $db->prepare($query);
+        $statement->bindValue(':userName', $userName);
+        $statement->execute();
+        $dbPassword = $statement->fetch();
+        $statement->closeCursor();
+        if($dbPassword[0] == $password) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }        
 }
 

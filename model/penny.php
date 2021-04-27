@@ -2,15 +2,16 @@
 class penny {
     
     //Create variables for the database table penny
-    private $pennyAmount, $pennyCondition, $pennyID, $pennyMint, $userName;
+    private $pennyAmount, $pennyCondition, $pennyID, $pennyMint, $userName, $pennyYear;
     
     //Constructor to hold necessary variables
-    public function __construct($pennyAmount, $pennyCondition, $pennyID, $pennyMint, $userName) {
+    public function __construct($pennyAmount, $pennyCondition, $pennyID, $pennyMint, $userName, $pennyYear) {
         $this->pennyAmount = $pennyAmount;
         $this->pennyCondition = $pennyCondition;
         $this->pennyID = $pennyID;
         $this->pennyMint = $pennyMint;
         $this->userName = $userName;       
+        $this->pennyYear = $pennyYear;
     }
     
     //Get pennyAmount
@@ -38,6 +39,11 @@ class penny {
         return $this->userName;
     }
 
+    //Get pennyYear
+    function getPennyYear() {
+        return $this->pennyYear;
+    }
+    
     //Set pennyAmount
     function setPennyAmount($pennyAmount) {
         $this->pennyAmount = $pennyAmount;
@@ -61,5 +67,10 @@ class penny {
     //Set userName
     function setUserName($userName) {
         $this->userName = $userName;
+    }
+    
+    //Set pennyYear
+    function setPennyYear($pennyYear) {
+        $this->pennyYear = $pennyYear;
     }
 }

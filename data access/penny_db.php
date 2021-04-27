@@ -4,16 +4,17 @@ class penny_db {
     //Create function
     public static function insertPenny($penny) {
         $db = Database::getDB();
-        $query = 'insert into penny(pennyAmount, pennyCondition'
-                . 'pennyID, pennyMint, userName)'
-                . 'values(:pennyAmount, :pennyCondition, :pennyID,'
-                . ':pennyMint, :userName)';
+        $query = 'insert into penny(pennyAmount, pennyCondition, '
+                . 'pennyID, pennyMint, userName, pennyYear) '
+                . 'values(:pennyAmount, :pennyCondition, :pennyID, '
+                . ':pennyMint, :userName, :pennyYear)';
         $statement = $db->prepare($query);
         $statement->bindValue(':pennyAmount', $penny -> getPennyAmount());
         $statement->bindValue(':pennyCondition', $penny -> getPennyCondition());
         $statement->bindValue(':pennyID', $penny -> getPennyID());
         $statement->bindValue(':pennyMint', $penny -> getPennyMint());
         $statement->bindValue(':userName', $penny -> getUserName());
+        $statement->bindValue(':pennyYear', $penny -> getPennyYear());
         $statement->execute();
         $statement->closeCursor();
     }
@@ -45,7 +46,7 @@ class penny_db {
         $db = Database::getDB();
         $query = 'update penny set '
                 . 'pennyAmount = :pennyAmount, pennyCondition = :pennyCondition,'
-                . ' pennyMint = :pennyMint, userName = :userName '
+                . ' pennyMint = :pennyMint, userName = :userName, pennyYear = :pennyYear '
                 . 'Where pennyID = :pennyID';
         $statement = $db->prepare($query);
         $statement->bindValue(':pennyAmount', $penny -> getPennyAmount());
@@ -53,6 +54,7 @@ class penny_db {
         $statement->bindValue(':pennyID', $penny -> getPennyID());
         $statement->bindValue(':pennyMint', $penny -> getPennyMint());
         $statement->bindValue(':userName', $penny -> getUserName());
+        $statement->bindValue(':pennyYear', $penny -> getPennyYear());
         $statement->execute();
         $statement->closeCursor();
     }
@@ -67,4 +69,39 @@ class penny_db {
         $statement->execute();
         $statement->closeCursor();
     }        
+    
+    //Get all of the pennies based off of userName
+    public static function getUsersPennies($userName) {
+        $db = Database::getDB();
+        $query = 'SELECT * FROM penny 
+                  WHERE userName = :userName
+                  ORDER BY pennyID';
+        $statement = $db->prepare($query);
+        $statement->bindValue(':userName', $userName);
+        $statement->execute();
+        $penny = $statement->fetchAll();
+        $statement->closeCursor();
+        
+        //Create an array of pennies, and then return the array 
+        /*foreach ($penny as $pennies) :           
+            $pennies['pennyAmount'];
+            $pennies['pennyCondition'];
+            $pennies['pennyID'];
+            $pennies['pennyMint'];
+            $pennies['userName'];
+            $pennies['pennyYear'];
+        endforeach; */
+        $newPennies = [];
+        foreach ($penny as $pennies) {
+            $newPenny = new Penny(
+                                   $pennies['pennyAmount'],
+                                   $pennies['pennyCondition'],
+                                   $pennies['pennyID'],
+                                   $pennies['pennyMint'],
+                                   $pennies['userName'],
+                                   $pennies['pennyYear']);
+            $newPennies[] = $newPenny;
+        }
+        return $newPennies;
+    }
 }

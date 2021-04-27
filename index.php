@@ -11,6 +11,7 @@ require_once 'data access/database_oo.php';
 require_once 'data access/penny_db.php';
 require_once 'data access/user_db.php';
 require_once 'model/user.php';
+require_once 'model/penny.php';
 
 //Initialize fallback page
 $action = filter_input(INPUT_POST, 'action');
@@ -36,14 +37,66 @@ switch ($action) {
         die();
         break;
     
-    //Create case for submission of log in 
-    case 'submit_log_in':
-        $userName = filter_input(INPUT_POST, 'userName');
-        $password = filter_input(INPUT_POST, 'password');
+    //Create case for user profile page
+    case 'user_profile':
+        include 'views/user_profile.php';
         die();
         break;
     
-    //Create case for submission of registration
+    //Create case for submission log in 
+    case 'submit_log_in':
+        $userName = filter_input(INPUT_POST, 'userName');
+        $password = filter_input(INPUT_POST, 'password');
+        $error_message = '';
+        $errorCode = 0;
+        
+        //Check to see if userName is not NULL
+        if($userName == '') {
+            $error_message .= 'Please enter a user name.<br><br>';
+            
+            $errorCode = 1;           
+        }
+        
+        //Check to see if password is not NULL
+        if($password == '') {
+            $error_message .= 'Please enter a password.<br><br>';
+            
+            $errorCode = 2;
+            
+        }
+        
+        
+        //If all goes well, allow the user to log in
+        if($errorCode == 0) {
+            
+            if(user_db:: checkLogIn($userName, $password)) {
+                
+                $_SESSION['userName'] = $userName;
+                
+                $pennies = penny_db::getUsersPennies($userName);
+                
+                include 'views/user_profile.php';
+            }
+            else {
+                $error_message .= 'User Name and password does not match.<br><br>';
+            
+                include 'views/log_in.php';
+            }
+            
+            //Clear variables after data access usage
+            $userName = '';
+            
+            $password = '';
+            
+        }
+        else {
+            include 'views/log_in.php';
+        }
+       
+        die();
+        break;
+    
+    //Create case for submission registration
     case 'submit_registration':
         $userName = filter_input(INPUT_POST, 'userName');
         $password = filter_input(INPUT_POST, 'password');
@@ -130,6 +183,7 @@ switch ($action) {
             
             $password = '';
             
+            //Thank the use for registering
             $error_message = 'Thank you for registering';
             
             include 'views/log_in.php';
@@ -139,5 +193,47 @@ switch ($action) {
         }
         die();
         break;
+        
+    //Create case for add_penny
+    case 'add_penny':
+        $pennyYear = filter_input(INPUT_POST, 'pennyYear');
+        $pennyMint = filter_input(INPUT_POST, 'pennyMint');
+        $pennyCondition = filter_input(INPUT_POST, 'pennyCondition');
+        $pennyAmount = filter_input(INPUT_POST, 'pennyAmount');
+        if($pennyYear == '' || $pennyMint == '' || $pennyCondition == '' || $pennyAmount == '') {
+            $message = 'Penny not added. No blank values.';
+        }
+        else {
+            //Data validation goes here
+            
+            
+            //Make the userName variable hold the user name that is in current use
+            $userName = $_SESSION['userName'];
+            
+            //Make a new penny
+            $newPenny = New penny($pennyAmount, $pennyCondition, 0, $pennyMint, $_SESSION['userName'], $pennyYear);
+            
+            //Insert the new penny in the database
+            penny_db:: insertPenny($newPenny);
+            
+            //Create a collection of penny records
+            $pennies = penny_db::getUsersPennies($_SESSION['userName']);
+            
+            
+            include 'views/user_profile.php';
+            
+            
+        }
+        die();
+        break;    
+    
+    //Create case for log_out
+    case 'log_out':
+        $_SESSION['userName'] = '';
+        session_unset();
+        session_destroy();
+        include 'views/log_in.php';
+        die();
+        break;    
 }
 ?>
