@@ -21,7 +21,14 @@ class user_db {
         $statement->execute();
         $user = $statement->fetchAll();
         $statement->closeCursor();
-        return $user;
+        
+        foreach ($user as $users) {
+            $newUser = new User(
+                $users['password'],
+                $users['userName']);
+            $newUsers[] = $newUser;
+        }
+        return $newUsers;
     }
             
     public static function getUserByName($userName) {
@@ -66,9 +73,12 @@ class user_db {
         $statement = $db->prepare($query);
         $statement->bindValue(':userName', $userName);
         $statement->execute();
-        $dbPassword = $statement->fetch();
+        $hash = $statement->fetch();
         $statement->closeCursor();
-        if($dbPassword[0] == $password) {
+        if($hash == NULL){
+            return false;
+        }
+        else if(password_verify($password, $hash[0])) {
             return true;
         }
         else {

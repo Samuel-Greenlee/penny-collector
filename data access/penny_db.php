@@ -39,8 +39,42 @@ class penny_db {
         $statement->execute();
         $penny = $statement->fetch();
         $statement->closeCursor();
-        return $penny;
-    }        
+        
+        $newPenny = new Penny(
+        $penny['pennyAmount'],
+        $penny['pennyCondition'],
+        $penny['pennyID'],
+        $penny['pennyMint'],
+        $penny['userName'],
+        $penny['pennyYear']);
+        
+        return $newPenny;
+    }
+    
+    public static function getUsersPennies($userName) {
+        $db = Database::getDB();
+        $query = 'SELECT * FROM penny 
+                  WHERE userName = :userName
+                  ORDER BY pennyID';
+        $statement = $db->prepare($query);
+        $statement->bindValue(':userName', $userName);
+        $statement->execute();
+        $penny = $statement->fetchAll();
+        $statement->closeCursor();
+        $newPennies = [];
+        foreach ($penny as $pennies) {
+            $newPenny = new Penny(
+                $pennies['pennyAmount'],
+                $pennies['pennyCondition'],
+                $pennies['pennyID'],
+                $pennies['pennyMint'],
+                $pennies['userName'],
+                $pennies['pennyYear']);
+            $newPennies[] = $newPenny;
+        }
+        return $newPennies;
+    }
+    
     //Update function
     public static function updatePenny($penny) {
         $db = Database::getDB();
@@ -69,39 +103,4 @@ class penny_db {
         $statement->execute();
         $statement->closeCursor();
     }        
-    
-    //Get all of the pennies based off of userName
-    public static function getUsersPennies($userName) {
-        $db = Database::getDB();
-        $query = 'SELECT * FROM penny 
-                  WHERE userName = :userName
-                  ORDER BY pennyID';
-        $statement = $db->prepare($query);
-        $statement->bindValue(':userName', $userName);
-        $statement->execute();
-        $penny = $statement->fetchAll();
-        $statement->closeCursor();
-        
-        //Create an array of pennies, and then return the array 
-        /*foreach ($penny as $pennies) :           
-            $pennies['pennyAmount'];
-            $pennies['pennyCondition'];
-            $pennies['pennyID'];
-            $pennies['pennyMint'];
-            $pennies['userName'];
-            $pennies['pennyYear'];
-        endforeach; */
-        $newPennies = [];
-        foreach ($penny as $pennies) {
-            $newPenny = new Penny(
-                                   $pennies['pennyAmount'],
-                                   $pennies['pennyCondition'],
-                                   $pennies['pennyID'],
-                                   $pennies['pennyMint'],
-                                   $pennies['userName'],
-                                   $pennies['pennyYear']);
-            $newPennies[] = $newPenny;
-        }
-        return $newPennies;
-    }
 }
